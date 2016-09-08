@@ -1,0 +1,4 @@
+click
+simple_model
+requests
+tabulate
