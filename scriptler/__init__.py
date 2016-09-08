@@ -15,4 +15,4 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-__version__ = '0.0.1'
+__version__ = '0.0.5'

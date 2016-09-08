@@ -52,7 +52,7 @@ def parse_config(config_path, defaults = {}):
     scriptler = defaults
     scripts = []
 
-    if 'scripts' in config:
+    if config.has_section('scripts'):
         for key, value in dict(config['scripts']).items():
             if ':' in value:
                 source_name, path = value.split(':', 1)
@@ -66,7 +66,7 @@ def parse_config(config_path, defaults = {}):
 
             scripts.append(Script(name = key, path = path, source = source))
 
-    if 'scriptler' in config:
+    if config.has_section('scriptler'):
         scriptler.update(config['scriptler'])
 
     del config

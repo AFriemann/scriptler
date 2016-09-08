@@ -66,7 +66,7 @@ todo
 
 * scriptler will ruthlessly reinstall files. Right now I don't care, but it would probably be better to change that
 * the only sources supported right now are github and local files
-
+* write some tests to ensure functionality
 
 license
 -------

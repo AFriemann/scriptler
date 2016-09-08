@@ -1,3 +1,5 @@
+dist
 .tox
+*.egg-info
 
 *.pyc
