@@ -53,13 +53,14 @@ def parse_config(config_path, defaults = {}):
     scripts = []
 
     if config.has_section('scripts'):
-        for key, value in dict(config['scripts']).items():
+        for key in config.options('scripts'):
+            value = config.get('scripts', key)
             if ':' in value:
                 source_name, path = value.split(':', 1)
 
-                assert source_name in config, "source %s is not defined" % source_name
+                assert config.has_section(source_name), "source %s is not defined" % source_name
 
-                source = Source(name = source_name, **dict(config[source_name]))
+                source = Source(name = source_name, **dict(config.items(source_name)))
             else:
                 path = value
                 source = None
@@ -67,7 +68,7 @@ def parse_config(config_path, defaults = {}):
             scripts.append(Script(name = key, path = path, source = source))
 
     if config.has_section('scriptler'):
-        scriptler.update(config['scriptler'])
+        scriptler.update(config.items('scriptler'))
 
     del config
 

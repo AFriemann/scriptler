@@ -50,7 +50,11 @@ def make_executable(path):
 def install(script, script_dir):
     logger.debug('installing %s to %s', script, script_dir)
 
-    os.makedirs(script_dir, exist_ok=True)
+    try:
+        os.makedirs(script_dir)
+    except OSError as e:
+        if e.errno != 17:
+            raise e
 
     basepath = os.path.join(script_dir, script.name)
 
