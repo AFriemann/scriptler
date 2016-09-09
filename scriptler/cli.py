@@ -20,7 +20,7 @@ import click, os, logging
 from tabulate import tabulate
 
 from .config import Config, parse_config, pretty_print, edit
-from . import scripts
+from . import scripts, __version__
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,10 @@ pass_config = click.make_pass_decorator(Config)
 def main(ctx, debug, config, script_dir):
     logging.basicConfig(level=logging.DEBUG if debug else logging.WARNING)
     ctx.obj = parse_config(config, defaults={'script_dir': script_dir})
+
+@main.command()
+def version():
+    print('Scriptler %s' % __version__)
 
 @main.command()
 @pass_config
