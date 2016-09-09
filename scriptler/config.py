@@ -17,7 +17,7 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 import logging, json, subprocess, os, ruamel.yaml as yaml, copy, re
 
-from simple_model import Model, Attribute, AttributeList
+from simple_model import Model, Attribute
 
 class Source(Model):
     url = Attribute(str)
