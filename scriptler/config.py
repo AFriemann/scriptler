@@ -15,67 +15,54 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-import logging, json, subprocess, os
-
-# F*** configparser and everybody who wrote it..
-
-try:
-    from ConfigParser import ConfigParser
-except ImportError:
-    from configparser import ConfigParser
+import logging, json, subprocess, os, ruamel.yaml as yaml, copy, re
 
 from simple_model import Model, Attribute, AttributeList
 
-logging.getLogger('simple_model').setLevel(logging.WARNING)
-
 class Source(Model):
-    name   = Attribute(str)
     url = Attribute(str)
     user = Attribute(str, optional=True)
     password = Attribute(str, optional=True)
     branch = Attribute(str, optional=True)
 
 class Script(Model):
-    name   = Attribute(str)
     path   = Attribute(str)
-    source = Attribute(Source, optional=True)
+    source = Attribute(str, optional=True)
+
+def parse_entry(t):
+    def parse(d):
+        name, values = d.popitem()
+        return { name: t(**values)}
+
+    return parse
 
 class Config(Model):
     path       = Attribute(str)
     script_dir = Attribute(str)
-    scripts    = AttributeList(Script, fallback=[])
+    scripts    = AttributeList(parse_entry(Script), fallback=[])
+    sources    = AttributeList(parse_entry(Source), fallback=[])
 
-def parse_config(config_path, defaults = {}):
-    config = ConfigParser()
-    config.read([ config_path ])
+def parse_config(path, defaults):
+    data = copy.deepcopy(defaults)
+    data.update({'path': path})
 
-    scriptler = defaults
-    scripts = []
+    with open(path, 'r') as stream:
+        data.update(yaml.safe_load(stream))
 
-    if config.has_section('scripts'):
-        for key in config.options('scripts'):
-            value = config.get('scripts', key)
-            if ':' in value:
-                source_name, path = value.split(':', 1)
+    return Config(**data)
 
-                assert config.has_section(source_name), "source %s is not defined" % source_name
+def dump_source(dumper, data):
+    return dumper.represent_mapping('source', dict(data))
 
-                source = Source(name = source_name, **dict(config.items(source_name)))
-            else:
-                path = value
-                source = None
+def dump_script(dumper, data):
+    return dumper.represent_mapping('script', dict(data))
 
-            scripts.append(Script(name = key, path = path, source = source))
-
-    if config.has_section('scriptler'):
-        scriptler.update(config.items('scriptler'))
-
-    del config
-
-    return Config(path = config_path, scripts = scripts, **scriptler)
+yaml.add_representer(Source, dump_source)
+yaml.add_representer(Script, dump_script)
 
 def pretty_print(config):
-    print(json.dumps(dict(config), sort_keys=True, indent=4))
+    dump = yaml.dump(dict(config), indent=2, default_flow_style=False).strip()
+    print(re.sub(r'!<.*>', '', dump))
 
 def edit(config):
     editor = os.environ.get('EDITOR')

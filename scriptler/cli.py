@@ -32,7 +32,7 @@ pass_config = click.make_pass_decorator(Config)
 
 @click.group()
 @click.option('-d', '--debug/--no-debug', default=False)
-@click.option('-c', '--config', type=click.Path(dir_okay=False, exists=True), default=os.path.expanduser('~/.config/scriptler/config.ini'))
+@click.option('-c', '--config', type=click.Path(dir_okay=False, exists=True), default=os.path.expanduser('~/.config/scriptler/config.yml'))
 @click.option('-s', '--script-dir', type=click.Path(file_okay=False), default=os.path.expanduser('~/.local/share/scriptler'))
 @click.pass_context
 def main(ctx, debug, config, script_dir):

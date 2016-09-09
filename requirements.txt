@@ -1,4 +1,5 @@
 click
 simple_model>=0.1.7
+ruamel.yaml
 requests
 tabulate
