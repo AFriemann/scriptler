@@ -15,7 +15,7 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-import click, os, logging
+import click, os, logging, json
 
 from tabulate import tabulate
 
@@ -27,6 +27,9 @@ logger = logging.getLogger(__name__)
 def pretty_path(path):
     HOME = os.environ.get('HOME')
     return path.replace(HOME, '~')
+
+def pretty_dict(d):
+    return json.dumps(d, sort_keys=True, indent=4)
 
 pass_config = click.make_pass_decorator(Config)
 
@@ -88,6 +91,15 @@ def status(config, table_format):
     script_table = [ (os.path.basename(s), s not in unmanaged_scripts) for s in all_scripts ]
 
     print(tabulate(script_table, headers=['script', 'managed'], tablefmt=table_format))
+
+@main.group()
+def config():
+    pass
+
+@config.command()
+@pass_config
+def view(config):
+    print(pretty_dict(dict(config)))
 
 def run():
     try:
