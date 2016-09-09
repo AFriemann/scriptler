@@ -53,9 +53,11 @@ def remove(config):
 @main.command()
 @pass_config
 def update(config):
-    for script in config.scripts:
-        print('installing %s' % script.name)
-        scripts.install(script, config.script_dir)
+    for name, script in config.scripts.items():
+        print('installing %s' % name)
+        if script.source is not None:
+            script.source = config.sources.get(script.source)
+        scripts.install(name, script, config.script_dir)
 
     for script in scripts.get_unmanaged(config.script_dir, config.scripts):
         print('removing unmanaged file %s' % os.path.basename(script))

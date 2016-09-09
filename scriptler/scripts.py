@@ -33,13 +33,13 @@ def get_all(path, only_executable = True):
                 yield abspath
 
 def get_unmanaged(path, managed_scripts):
-    managed_script_names = [ s.name for s in managed_scripts ]
+    managed_script_names = managed_scripts.keys()
     for script in get_all(path, False):
         if os.path.basename(script) not in managed_script_names:
             yield script
 
 def get_managed(path, managed_scripts):
-    managed_script_names = [ s.name for s in managed_scripts ]
+    managed_script_names = managed_scripts.keys()
     for script in get_all(path, False):
         if os.path.basename(script) in managed_script_names:
             yield script
@@ -47,7 +47,7 @@ def get_managed(path, managed_scripts):
 def make_executable(path):
     os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
 
-def install(script, script_dir):
+def install(name, script, script_dir):
     logger.debug('installing %s to %s', script, script_dir)
 
     try:
@@ -56,7 +56,7 @@ def install(script, script_dir):
         if e.errno != 17:
             raise e
 
-    basepath = os.path.join(script_dir, script.name)
+    basepath = os.path.join(script_dir, name)
 
     sources.get(script.path, script.source, basepath)
 

@@ -29,18 +29,20 @@ class Script(Model):
     path   = Attribute(str)
     source = Attribute(str, optional=True)
 
-def parse_entry(t):
+def parse_entries(t):
     def parse(d):
-        name, values = d.popitem()
-        return { name: t(**values)}
+        result = {}
+        for name, values in d.items():
+            result.update({ name: t(**values) })
+        return result
 
     return parse
 
 class Config(Model):
     path       = Attribute(str)
     script_dir = Attribute(str)
-    scripts    = AttributeList(parse_entry(Script), fallback=[])
-    sources    = AttributeList(parse_entry(Source), fallback=[])
+    scripts    = Attribute(parse_entries(Script), fallback=[])
+    sources    = Attribute(parse_entries(Source), fallback=[])
 
 def parse_config(path, defaults):
     data = copy.deepcopy(defaults)
@@ -51,18 +53,21 @@ def parse_config(path, defaults):
 
     return Config(**data)
 
-def dump_source(dumper, data):
-    return dumper.represent_mapping('source', dict(data))
-
-def dump_script(dumper, data):
-    return dumper.represent_mapping('script', dict(data))
-
-yaml.add_representer(Source, dump_source)
-yaml.add_representer(Script, dump_script)
-
 def pretty_print(config):
-    dump = yaml.dump(dict(config), indent=2, default_flow_style=False).strip()
-    print(re.sub(r'!<.*>', '', dump))
+    def represent_model(t):
+        def represent_subclass(dumper, data):
+            return dumper.represent_mapping(data.__class__.__name__, dict(data))
+        return represent_subclass
+
+    yaml.add_representer(Source, represent_model(Source))
+    yaml.add_representer(Script, represent_model(Script))
+
+    # ugly..
+    dump = yaml.dump(dict(config), indent=2, default_flow_style=False)
+    dump = re.sub(r'!<.*>', '', dump)
+    dump = re.sub(r'.*: null\n', '', dump)
+
+    print(dump.strip())
 
 def edit(config):
     editor = os.environ.get('EDITOR')
