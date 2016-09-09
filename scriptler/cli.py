@@ -15,11 +15,11 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-import click, os, logging, json
+import click, os, logging
 
 from tabulate import tabulate
 
-from .config import Config, parse_config
+from .config import Config, parse_config, pretty_print, edit
 from . import scripts
 
 logger = logging.getLogger(__name__)
@@ -27,9 +27,6 @@ logger = logging.getLogger(__name__)
 def pretty_path(path):
     HOME = os.environ.get('HOME')
     return path.replace(HOME, '~')
-
-def pretty_dict(d):
-    return json.dumps(d, sort_keys=True, indent=4)
 
 pass_config = click.make_pass_decorator(Config)
 
@@ -99,7 +96,12 @@ def config():
 @config.command()
 @pass_config
 def view(config):
-    print(pretty_dict(dict(config)))
+    pretty_print(config)
+
+@config.command(name='edit')
+@pass_config
+def config_edit(config):
+    return edit(config)
 
 def run():
     try:

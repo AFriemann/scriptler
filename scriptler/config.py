@@ -15,7 +15,7 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-import logging
+import logging, json, subprocess, os
 
 # F*** configparser and everybody who wrote it..
 
@@ -73,5 +73,16 @@ def parse_config(config_path, defaults = {}):
     del config
 
     return Config(path = config_path, scripts = scripts, **scriptler)
+
+def pretty_print(config):
+    print(json.dumps(dict(config), sort_keys=True, indent=4))
+
+def edit(config):
+    editor = os.environ.get('EDITOR')
+
+    if editor is None:
+        raise RuntimeError('Environment variable EDITOR is not set.')
+
+    return subprocess.call([editor, config.path])
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4 fenc=utf-8
