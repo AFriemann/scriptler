@@ -33,16 +33,21 @@ def get_all(path, only_executable = True):
                 yield abspath
 
 def get_unmanaged(path, managed_scripts):
-    managed_script_names = managed_scripts.keys()
     for script in get_all(path, False):
-        if os.path.basename(script) not in managed_script_names:
+        if os.path.basename(script) not in managed_scripts:
             yield script
 
 def get_managed(path, managed_scripts):
-    managed_script_names = managed_scripts.keys()
     for script in get_all(path, False):
-        if os.path.basename(script) in managed_script_names:
+        if os.path.basename(script) in managed_scripts:
             yield script
+
+def get_installed(path, managed_scripts):
+    managed_script_names = managed_scripts.keys()
+    for script in get_all(path):
+        name = os.path.basename(script)
+        if name in managed_script_names:
+            yield name
 
 def make_executable(path):
     os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)

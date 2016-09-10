@@ -19,7 +19,9 @@ import click, os, logging
 
 from tabulate import tabulate
 
+from .util import bool2str
 from .config import Config, parse_config, pretty_print, edit
+
 from . import scripts, __version__
 
 logger = logging.getLogger(__name__)
@@ -88,12 +90,15 @@ def status(config, table_format):
 
     print(tabulate(config_table, tablefmt='plain') + '\n')
 
-    all_scripts = list(scripts.get_all(config.script_dir))
-    unmanaged_scripts = list(scripts.get_unmanaged(config.script_dir, config.scripts))
+    managed_scripts = list(config.scripts.keys())
+    unmanaged_scripts = [ os.path.basename(s) for s in scripts.get_unmanaged(config.script_dir, managed_scripts) ]
+    installed_scripts = [ os.path.basename(s) for s in scripts.get_all(config.script_dir) ]
 
-    script_table = [ (os.path.basename(s), s not in unmanaged_scripts) for s in all_scripts ]
+    all_scripts = set(managed_scripts + installed_scripts)
 
-    print(tabulate(script_table, headers=['script', 'managed'], tablefmt=table_format))
+    script_table = [ (os.path.basename(s), bool2str(s not in unmanaged_scripts), bool2str(s in installed_scripts)) for s in all_scripts ]
+
+    print(tabulate(script_table, headers=['script', 'managed', 'installed'], tablefmt=table_format))
 
 @main.group()
 def config():
