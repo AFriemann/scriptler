@@ -13,19 +13,24 @@ As usual, use pip to install::
 usage
 -----
 
-First off, create a configuration file in ~/.config/scriptler/config::
+First off, create a configuration file in ~/.config/scriptler/config.yml::
 
-    [scriptler]
-    script_dir = ~/.local/share/scriptler
+    scriptler:
+        script_dir: /home/aljosha/.local/share/scriptler
 
-    [afriemann/scripts.git]
-    url = github.com/AFriemann/scripts
-    branch = master
+    scripts:
+        proxy-foxy:
+            path: ~/git/scripts/bash/proxy-foxy
+        socksme:
+            path: ~/git/scripts/bash/socksme
+        swap:
+            path: bash/swap
+            source: afriemann/scripts.git
 
-    [scripts]
-    socksme = ~/git/scripts/bash/socksme
-    proxy-foxy = ~/git/scripts/bash/proxy-foxy
-    swap = afriemann/scripts.git:bin/swap
+    sources:
+        afriemann/scripts.git:
+            branch: master
+            url: github.com/AFriemann/scripts
 
 The only thing of note is that the section scripts is reserved for the actual scripts. Repository sections may be
 named however you please.
