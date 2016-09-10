@@ -55,11 +55,12 @@ To get a nice list of currently installed scripts::
     config file  ~/.config/scriptler/config
     script dir   ~/.local/share/scriptler
 
-    script        managed
-    ----------  ---------
-    swap                1
-    proxy-foxy          1
-    socksme             1
+    script     managed    installed
+    ---------  ---------  -----------
+    swap       yes        no
+    proxy-foxy yes        yes
+    socksme    yes        yes
+    foobar     no         yes
 
 todo
 ----
