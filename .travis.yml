@@ -10,3 +10,13 @@ install:
 script:
     - py.test --cov-config coverage.cfg --cov scriptler --cov-report term tests
     - py.test --doctest-module README.rst
+deploy:
+    - provider: pypi
+      distributions: sdist
+      user: afriemann
+      password:
+        secure: "nzDvqs8OU7ro0X9PuEz7PYwkE+gbBu49SnfnPHCJCVm0T0k/vOddUWfNbk4C1kt0F2r/sS3zsNSNwVAf24VJRqyDE6C5B9rvBcOGDCQR6wqPs8/Xhz91GnJTnkvjkjZeb7nz0obDd7OGraz2ZniV92qlzJCc/93QGoOadN90JkRFcWnR2sCOJubufokqs4tbpLvYTbjgB8SiMDmKac0s+opkXcFk7bogFmwEd3T2rfLW2QLdvwWg/uJewRlLCGhvU7C1kgWyy7l8XYgDp9O1cuHP1NDJNpBZ7oIMebQqr8zT2uujnkKm0v5Iso2Q1STaMCXAwg45jltQb5ID7gy4rUHVngHQdg34zVHa0d9kc8QcxzkmsqG8d2v1fDl92iYiHNWtoDmdzxMSnEQGywGDZXM+Fs4JhjkMCeUqhcRt3mZrmdfrjyLAQB3REe7cX86TL1vMzkTp3ieSgqNY3PNZCkv3yNVrVcArfrSQYVi/qQrZkUNx2DWZxb79/UrTSeBzPTc2+32Yf0lHgPe+QF6wtf40+Z/44mACCEfDbHa9YOot3HPB3Gp+mQdpgMURFhAjATiVIwT7Sg54WpYxDsHrsnw6mOkCaCUwPRj8TsweqC5jQ6eoWk5sl0mIj0TWS8xCK8rr7vtk9MfneYrxI2Ie1Big0dnTL0aMsc/n4XxS+9E="
+      on:
+        branch: master
+        tags: true
+        condition: $TRAVIS_PYTHON_VERSION = "3.4"
