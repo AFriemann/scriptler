@@ -15,4 +15,4 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-__version__ = '1.2.0'
+__version__ = '1.2.0.post1'
