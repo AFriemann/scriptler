@@ -21,11 +21,17 @@ logger = logging.getLogger(__name__)
 
 logging.getLogger('requests').setLevel(logging.WARNING)
 
-class UnknownSourceException(RuntimeError):
-    pass
+class UndefinedSourceException(RuntimeError):
+    def __str__(self):
+        return "Found undefined source: {}".format(', '.join(self.args))
+
+class UnsupportedSourceException(RuntimeError):
+    def __str__(self):
+        return "Source not yet supported: {}".format(', '.join(self.args))
 
 class NoSuchFileException(RuntimeError):
-    pass
+    def __str__(self):
+        return "No such file: {}".format(', '.join(self.args))
 
 class AuthenticationException(RuntimeError):
     pass
@@ -36,7 +42,7 @@ class github:
     @staticmethod
     def build_url(url, branch, path):
         repo = url.split('github.com/')[-1]
-        return '/'.join([ 'https://raw.githubusercontent.com', repo, branch if branch else 'master', path ])
+        return '/'.join([ 'https://raw.githubusercontent.com', repo, branch or 'master', path ])
 
     @staticmethod
     def match(path):
@@ -63,7 +69,7 @@ def get(path, source, target):
         if github.match(source.url):
             github.get(source, path, target)
         else:
-            raise UnknownSourceException(source)
+            raise UnsupportedSourceException(source)
     else:
         shutil.copy(os.path.expanduser(path), target)
 
