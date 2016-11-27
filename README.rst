@@ -31,15 +31,23 @@ First off, create a configuration file in ~/.config/scriptler/config.yml::
         swap:
             path: bash/swap
             source: afriemann/scripts.git
+        h:
+            source: hhighlighter
+            path: h.sh
+            command: echo 'h $@' >> {}
 
     sources:
         afriemann/scripts.git:
             branch: master
             url: github.com/AFriemann/scripts
+        hhighlighter:
+            url: github.com/paoloantinori/hhighlighter
+            branch: master
 
-The only thing of note is that the section scripts is reserved for the actual scripts. Repository sections may be
-named however you please.
-The `scriptler` section is not required (~/.local/share/scriptler is the default) but should be something you have
+Repository sections may be named however you please while script sections will determine the linked filename.
+The command can be used to run commands after script installation. `{}` expands to the file. In this particular example it will
+add "h" to the file since it normally only contains a function called "h".
+The `scriptler` section is not required (~/.local/share/scriptler is the default) but `script_dir` should be something you have
 write access to and can add to your $PATH.
 
 To install the scripts, simply run::
@@ -48,6 +56,7 @@ To install the scripts, simply run::
     installing socksme
     installing swap
     installing proxy-foxy
+    installing h
     removing unmanaged file foobar
 
 This will also remove unmanaged files (those that you removed from your configuration file/never added).
@@ -58,6 +67,7 @@ And to remove them again::
     removing swap
     removing proxy-foxy
     removing socksme
+    removing h
 
 To get a nice list of currently installed scripts::
 
@@ -68,6 +78,7 @@ To get a nice list of currently installed scripts::
     script     managed    installed
     ---------  ---------  -----------
     swap       yes        no
+    h          yes        yes
     proxy-foxy yes        yes
     socksme    yes        yes
     foobar     no         yes
@@ -78,6 +89,8 @@ todo
 * scriptler will ruthlessly reinstall files. Right now I don't care, but it would probably be better to change that
 * the only sources supported right now are github and local files
 * write some tests to ensure functionality
+* `scriptler config edit` should not parse the config file beforehand and should check afterwards
+* the command option for sources is very rudimentary and probably asking for tons of problems
 
 license
 -------
