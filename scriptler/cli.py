@@ -19,10 +19,10 @@ import click, os, logging
 
 from tabulate import tabulate
 
-from .util import bool2str
-from .config import Config, parse_config, pretty_print, edit
+from scriptler.util import bool2str
+from scriptler.config import Config, parse_config, pretty_print, edit
 
-from . import scripts, __version__
+from scriptler import scripts, __version__
 
 logger = logging.getLogger(__name__)
 

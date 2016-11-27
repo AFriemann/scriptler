@@ -28,6 +28,7 @@ class Source(Model):
 class Script(Model):
     path   = Attribute(str)
     source = Attribute(str, optional=True)
+    command = Attribute(str, optional=True)
 
 def parse_entries(t):
     def parse(d):

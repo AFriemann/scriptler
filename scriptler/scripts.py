@@ -15,11 +15,15 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 """
 
-import os, logging, stat
+import os, logging, stat, subprocess
 
 from . import sources
 
 logger = logging.getLogger(__name__)
+
+class FailedCommandException(RuntimeError):
+    def __str__(self):
+        return "Failed to execute command: {}".format(', '.join(self.args))
 
 def get_all(path, only_executable = True):
     for root,dirs,files in os.walk(path):
@@ -52,6 +56,9 @@ def get_installed(path, managed_scripts):
 def make_executable(path):
     os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
 
+def execute_command(file_path, command):
+    return subprocess.Popen(command.format(file_path), shell=True).wait()
+
 def install(name, script, script_dir):
     logger.debug('installing %s to %s', script, script_dir)
 
@@ -66,6 +73,10 @@ def install(name, script, script_dir):
     sources.get(script.path, script.source, basepath)
 
     make_executable(basepath)
+
+    if script.command:
+        if execute_command(basepath, script.command) != 0:
+            raise FailedCommandException(script.command)
 
 def remove(path):
     logger.debug('deleting %s', path)
