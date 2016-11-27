@@ -1,5 +1,8 @@
+reports
 dist
 .tox
+.cache
+.coverage
 *.egg-info
 
 *.pyc

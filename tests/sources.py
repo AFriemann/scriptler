@@ -8,19 +8,26 @@
 
 """
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 import unittest, tempfile
 
-from httmock import urlmatch
+from httmock import all_requests, HTTMock
 
 from scriptler import sources, config
 
 class TestSources(unittest.TestCase):
     pass
 
-@urlmatch(netloc=r'https://raw.githubusercontent.com/(.*)')
-def githubusercontent(url, request):
-    print(url)
-    print(request)
+mock_files = {
+    'test.sh': '#!/bin/sh\necho "test"'
+}
+
+@all_requests
+def response_content(url, request):
+    file_name = url.path.split('/')[-1]
+    return mock_files.get(file_name) or {'status_code': 404, 'content': '404 Not Found'}
 
 class TestGithub(unittest.TestCase):
     def setUp(self):
@@ -51,8 +58,9 @@ class TestGithub(unittest.TestCase):
 
     def test_get(self):
         with tempfile.NamedTemporaryFile() as f:
-            self.client.get(self.source, 'README.rst', f.name)
+            with HTTMock(response_content):
+                self.client.get(self.source, 'test.sh', f.name)
 
-        assert False
+                self.assertEqual(f.read(), mock_files.get('test.sh').encode())
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4 fenc=utf-8
