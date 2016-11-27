@@ -1,6 +1,11 @@
 scriptler
 =========
 
+.. image:: https://travis-ci.org/AFriemann/scriptler.svg?branch=persistent-attributes
+    :target: https://travis-ci.org/AFriemann/scriptler
+.. image:: https://badge.fury.io/py/scriptler.svg
+    :target: https://badge.fury.io/py/scriptler
+
 Scriptler allows you to manage scripts from different sources in one place with a simple configuration file.
 
 installation
