@@ -3,13 +3,11 @@ python:
     - "2.7"
     - "3.4"
 install:
-    - pip install -r requirements.txt
     - pip install -r requirements/tests
     - pip install -r requirements/pytest
     - pip install -e .
 script:
     - py.test --cov-config coverage.cfg --cov scriptler --cov-report term tests
-    - py.test --doctest-module README.rst
 deploy:
     - provider: pypi
       distributions: sdist
