@@ -1,7 +1,7 @@
 scriptler
 =========
 
-.. image:: https://travis-ci.org/AFriemann/scriptler.svg?branch=persistent-attributes
+.. image:: https://travis-ci.org/AFriemann/scriptler.svg?branch=master
     :target: https://travis-ci.org/AFriemann/scriptler
 .. image:: https://badge.fury.io/py/scriptler.svg
     :target: https://badge.fury.io/py/scriptler
