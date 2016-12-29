@@ -54,7 +54,9 @@ def get_installed(path, managed_scripts):
             yield name
 
 def make_executable(path):
-    os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
+    mode = os.stat(path).st_mode
+    mode |= (mode & 0o444) >> 2    # copy R bits to X
+    os.chmod(path, mode)
 
 def execute_command(file_path, command):
     return subprocess.Popen(command.format(file_path), shell=True).wait()
