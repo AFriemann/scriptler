@@ -77,9 +77,8 @@ def remove(config):
 def update(config):
     for name, script in config.scripts.items():
         print('installing %s' % name)
-        if script.source is not None:
-            script.source = config.sources.get(script.source)
-        scripts.install(name, script, config.script_dir)
+        source = config.sources.get(script.source) if script.source else None
+        scripts.install(name, script, source, config.script_dir)
 
     for script in scripts.get_unmanaged(config.script_dir, config.scripts):
         print('removing unmanaged file %s' % os.path.basename(script))

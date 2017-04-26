@@ -61,7 +61,7 @@ def make_executable(path):
 def execute_command(file_path, command):
     return subprocess.Popen(command.format(file_path), shell=True).wait()
 
-def install(name, script, script_dir):
+def install(name, script, source, script_dir):
     logger.debug('installing %s to %s', script, script_dir)
 
     try:
@@ -72,7 +72,7 @@ def install(name, script, script_dir):
 
     basepath = os.path.join(script_dir, name)
 
-    sources.get(script.path, script.source, basepath)
+    sources.get(script.path, source, basepath)
 
     make_executable(basepath)
 
