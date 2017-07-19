@@ -17,7 +17,9 @@ and you think this stuff is worth it, you can buy me a beer in return.
 
 import os, logging, stat, subprocess
 
-from . import sources
+from simple_tools.lists import find
+
+from scriptler import sources
 
 logger = logging.getLogger(__name__)
 
@@ -38,12 +40,12 @@ def get_all(path, only_executable = True):
 
 def get_unmanaged(path, managed_scripts):
     for script in get_all(path, False):
-        if os.path.basename(script) not in managed_scripts:
+        if not find(lambda s: s.name == os.path.basename(script), managed_scripts):
             yield script
 
 def get_managed(path, managed_scripts):
     for script in get_all(path, False):
-        if os.path.basename(script) in managed_scripts:
+        if find(lambda s: s.name == os.path.basename(script), managed_scripts):
             yield script
 
 def get_installed(path, managed_scripts):

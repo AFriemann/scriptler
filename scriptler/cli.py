@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-.. module:: TODO
+.. module:: scriptler.cli
    :platform: Unix
    :synopsis: TODO.
 
-.. moduleauthor:: Aljosha Friemann aljosha.friemann@gmail.com
+.. moduleauthor:: Aljosha Friemann a.friemann@automate.wtf
 
 ----------------------------------------------------------------------------
 "THE BEER-WARE LICENSE" (Revision 42):
@@ -18,9 +18,11 @@ and you think this stuff is worth it, you can buy me a beer in return.
 import click, os, logging
 
 from tabulate import tabulate
+from simple_tools.lists import find
+from simple_tools.conversions import bool2str
 
-from scriptler.util import bool2str
-from scriptler.config import Config, parse_config, pretty_print, edit
+from scriptler.model import Config, Source, Script
+from scriptler.config import parse_config, pretty_print, edit, save
 
 from scriptler import scripts, __version__
 
@@ -59,7 +61,10 @@ def main(ctx, user, debug, config, script_dir):
         script_dir = defaults.get('scripts')
 
     logging.basicConfig(level=logging.DEBUG if debug else logging.WARNING)
-    ctx.obj = parse_config(config, defaults={'script_dir': script_dir})
+    ctx.obj = parse_config(
+        config,
+        defaults={'script_dir': script_dir, 'scripts': {}, 'sources': {}}
+    )
 
 @main.command()
 def version():
@@ -75,10 +80,14 @@ def remove(config):
 @main.command()
 @pass_config
 def update(config):
-    for name, script in config.scripts.items():
-        print('installing %s' % name)
-        source = config.sources.get(script.source) if script.source else None
-        scripts.install(name, script, source, config.script_dir)
+    for script in config.scripts:
+        print('installing %s' % script.name)
+
+        source = None
+        if script.source is not None:
+            source = find(lambda s: s.name == script.source, config.sources)
+
+        scripts.install(script.name, script, source, config.script_dir)
 
     for script in scripts.get_unmanaged(config.script_dir, config.scripts):
         print('removing unmanaged file %s' % os.path.basename(script))
@@ -109,13 +118,10 @@ def status(config, table_format):
 
     print(tabulate(config_table, tablefmt='plain') + '\n')
 
-    managed_scripts = list(config.scripts.keys())
-    unmanaged_scripts = [ os.path.basename(s) for s in scripts.get_unmanaged(config.script_dir, managed_scripts) ]
-    installed_scripts = [ os.path.basename(s) for s in scripts.get_all(config.script_dir) ]
+    unmanaged_scripts = set( os.path.basename(s) for s in scripts.get_unmanaged(config.script_dir, config.scripts) )
+    installed_scripts = set( os.path.basename(s) for s in scripts.get_all(config.script_dir) )
 
-    all_scripts = set(managed_scripts + installed_scripts)
-
-    script_table = [ (os.path.basename(s), bool2str(s not in unmanaged_scripts), bool2str(s in installed_scripts)) for s in all_scripts ]
+    script_table = [ (os.path.basename(s), bool2str(s not in unmanaged_scripts), bool2str(s in installed_scripts)) for s in installed_scripts ]
 
     print(tabulate(script_table, headers=['script', 'managed', 'installed'], tablefmt=table_format))
 
@@ -123,15 +129,54 @@ def status(config, table_format):
 def config():
     pass
 
-@config.command()
+@config.command(name='view')
 @pass_config
-def view(config):
+def config_view(config):
     pretty_print(config)
 
 @config.command(name='edit')
 @pass_config
 def config_edit(config):
     return edit(config)
+
+@main.group()
+def add():
+    pass
+
+@add.command(name='source')
+@pass_config
+@click.option('-u', '--username')
+@click.option('-p', '--password')
+@click.option('-b', '--branch')
+@click.argument('name')
+@click.argument('url')
+def add_source(config, username, password, branch, name, url):
+    for source in config.sources:
+        if source.name == name:
+            raise AssertionError('Source with name {} already exists'.format(name))
+        elif source.url == url:
+            raise AssertionError('Source with url {} already exists ({})'.format(url, source.name))
+
+    config.sources.append(Source(name=name, url=url, user=username, password=password, branch=branch))
+
+    save(config)
+
+@add.command(name='script')
+@pass_config
+@click.option('-c', '--command')
+@click.argument('name')
+@click.argument('source')
+@click.argument('path')
+def add_source(config, command, name, source, path):
+    for script in config.scripts:
+        if script.name == name:
+            raise AssertionError('Source with name {} already exists'.format(name))
+        elif script.source == source and script.path == path:
+            raise AssertionError('Script from source {} and with path {} already exists ({})'.format(source, path, script.name))
+
+    config.scripts.append(Script(name=name, path=path, source=source, command=command))
+
+    save(config)
 
 def run():
     try:

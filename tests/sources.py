@@ -32,7 +32,7 @@ def response_content(url, request):
 class TestGithub(unittest.TestCase):
     def setUp(self):
         self.client = sources.github
-        self.source = config.Source(url='github.com/afriemann/scriptler')
+        self.source = config.Source(name='test', url='github.com/afriemann/scriptler')
 
     def tearDown(self):
         del self.client
