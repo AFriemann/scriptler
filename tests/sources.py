@@ -4,7 +4,7 @@
    :platform: Unix
    :synopsis: TODO.
 
-.. moduleauthor:: Aljosha Friemann aljosha.friemann@gmail.com
+.. moduleauthor:: Aljosha Friemann a.friemann@automate.wtf
 
 """
 

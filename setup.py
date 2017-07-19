@@ -4,7 +4,7 @@
    :platform: Unix
    :synopsis: TODO.
 
-.. moduleauthor:: Aljosha Friemann aljosha.friemann@gmail.com
+.. moduleauthor:: Aljosha Friemann a.friemann@automate.wtf
 
 """
 
@@ -46,7 +46,7 @@ if 'upload' in sys.argv or 'register' in sys.argv:
 
 setup(name             = "scriptler",
       author           = "Aljosha Friemann",
-      author_email     = "aljosha.friemann@gmail.com",
+      author_email     = "a.friemann@automate.wtf",
       description      = "manage scripts from different sources",
       url              = "https://www.github.com/afriemann/scriptler",
       download_url     = "https://github.com/AFriemann/scriptler/archive/{}.tar.gz".format(__version__),
