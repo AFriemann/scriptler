@@ -31,18 +31,16 @@ First off, create a configuration file in ~/.config/scriptler/config.yml::
         swap:
             path: bash/swap
             source: afriemann/scripts.git
-        h:
-            source: hhighlighter
-            path: h.sh
-            command: echo 'h $@' >> {}
 
     sources:
         afriemann/scripts.git:
             branch: master
             url: github.com/AFriemann/scripts
-        hhighlighter:
-            url: github.com/paoloantinori/hhighlighter
-            branch: master
+
+You can also add scripts and sources directly via the CLI::
+
+    $ scriptler add source highlighter github.com/paoloantinori/hhighlighter
+    $ scriptler add script h highlighter h.sh --command 'echo "h $@" >> {}'
 
 Repository sections may be named however you please while script sections will determine the linked filename.
 The command can be used to run commands after script installation. *{}* expands to the file. In this particular example it will
