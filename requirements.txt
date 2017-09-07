@@ -1,6 +1,0 @@
-click
-simple_model>=1.1.2
-simple_tools>=0.0.3
-ruamel.yaml
-requests
-tabulate
